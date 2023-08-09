@@ -3,8 +3,12 @@ const path = require('path');
 const methodOverride = require('method-override');
 const ejsMate= require('ejs-mate')
 const Campground = require('./models/campground')
+const catchAsync =require('./utils/catchAsync')
+const ExpressError =require('./utils/ExpressError')
+
 
 const mongoose = require('mongoose');
+const { wrap } = require('module');
 mongoose.connect('mongodb://127.0.0.1:27017/yelp-camp', {
     useNewUrlParser: true,
     useUnifiedTopology: true
@@ -35,10 +39,14 @@ app.get('/campgrounds/new', (req,res)=>{
     res.render('campgrounds/new')
 })
 
-app.post('/campgrounds', async (req,res)=>{
+app.post('/campgrounds',  catchAsync(async (req,res,next)=>{
     const campground= new Campground(req.body.campground)
     await campground.save();
     res.redirect(`/campgrounds/${campground._id}`)
+
+}))
+app.use((err,req,res,next)=>{
+    res.send('wrong')
 })
 
 app.get('/campgrounds/:id',async(req,res)=>{
@@ -65,6 +73,11 @@ app.delete("/campgrounds/:id",async(req,res)=>{
      res.redirect('/campgrounds');
 
 })
+
+
+
+
+
 
 app.listen(3000, ()=>{
     console.log("Server running on port 3000")
