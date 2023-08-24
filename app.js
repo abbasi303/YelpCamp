@@ -9,11 +9,15 @@ const Joi = require('joi')
 const session = require('express-session')
 const { campgroundSchema, reviewSchema } = require('./schemas.js')
 const Review = require('./models/review')
+const passport = require('passport')
+const LocalStrategy = require('passport-local')
+const User = require('./models/user')
+
 
 
 const flash = require('connect-flash')
 const campgroundsRoute = require('./routes/campground')
-
+const userRoute = require('./routes/user')
 const reviewsRoute = require('./routes/reviews')
 
 
@@ -56,7 +60,16 @@ app.set('views',path.join(__dirname,'views'))
 app.use(session(sessionConfig))
 app.use(flash());
 
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new LocalStrategy(User.authenticate()));
+
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
 app.use((req,res,next)=>{
+    console.log(req.session)
+    res.locals.currentUser= req.user;
     res.locals.success = req.flash('success');
     res.locals.error = req.flash('error');
 
@@ -64,8 +77,13 @@ app.use((req,res,next)=>{
 
 })
 
+app.get('/fakeuser',async(req,res,next)=>{
+    const user = new User({email: 'abbasigmail.com', username:'abbasi'})
+    const newUser = await User.register(user,'chicken');
+    res.send(newUser)
+})
 
-
+app.use('/',userRoute);
 app.use('/campgrounds',campgroundsRoute);
 app.use('/campgrounds/:id/reviews',reviewsRoute);
 
