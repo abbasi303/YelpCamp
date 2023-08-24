@@ -26,6 +26,7 @@ const seedDB =async(req,res )=>{
 
 
         const camp= new Campground({
+            author:'64e749ff110bdb6134b7d71b',
             location:`${cities[random100].city},${cities[random100].state}`,
             title:`${sample(descriptors)} ${sample(places)}`,
             image:'https://random.imagecdn.app/500/150',
