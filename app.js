@@ -103,6 +103,7 @@ app.use((err,req,res,next)=>{
     const {statusCode =500 , message='Something wrong'}= err;
     if(!err.message) err.message = 'Oh no, Something Went Wrong'
     res.status(statusCode).render('error',{err});
+    
 })
 
 app.listen(3000, ()=>{
