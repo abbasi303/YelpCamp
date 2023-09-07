@@ -7,6 +7,7 @@ style: 'mapbox://styles/mapbox/streets-v12', // style URL
 center: goodCampground.geometry.coordinates, // starting position [lng, lat]
 zoom: 9, // starting zoom
 });
+map.addControl((new mapboxgl.NavigationControl()));
 
 new mapboxgl.Marker()
     .setLngLat(goodCampground.geometry.coordinates)

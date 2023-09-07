@@ -16,7 +16,7 @@ const Review = require('./models/review')
 const passport = require('passport')
 const LocalStrategy = require('passport-local')
 const User = require('./models/user')
-
+const mongoSanitize = require('express-mongo-sanitize')
 
 
 const flash = require('connect-flash')
@@ -63,6 +63,7 @@ app.set('views',path.join(__dirname,'views'))
 
 app.use(session(sessionConfig))
 app.use(flash());
+app.use(mongoSanitize())
 
 app.use(passport.initialize());
 app.use(passport.session());
@@ -85,6 +86,10 @@ app.get('/fakeuser',async(req,res,next)=>{
     const user = new User({email: 'abbasigmail.com', username:'abbasi'})
     const newUser = await User.register(user,'chicken');
     res.send(newUser)
+})
+
+app.get('/',(req,res)=>{
+    res.render('home')
 })
 
 app.use('/',userRoute);

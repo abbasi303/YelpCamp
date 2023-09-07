@@ -1,12 +1,13 @@
 mapboxgl.accessToken = mapToken;
 const map = new mapboxgl.Map({
-container: 'map',
+container: 'cluster-map',
 // Choose from Mapbox's core styles, or make your own style with Mapbox Studio
 style: 'mapbox://styles/mapbox/dark-v11',
 center: [-103.5917, 40.6699],
 zoom: 3
 });
- 
+
+map.addControl((new mapboxgl.NavigationControl()));
 map.on('load', () => {
 // Add a new source from our GeoJSON data and
 // set the 'cluster' option to true. GL-JS will
@@ -102,7 +103,7 @@ zoom: zoom
 // the location of the feature, with
 // description HTML from its properties.
 map.on('click', 'unclustered-point', (e) => {
-    const text = e.features[0].properties.popUpMarkup;
+    const {popUpMarkup} = e.features[0].properties;
 const coordinates = e.features[0].geometry.coordinates.slice();
 
  
@@ -115,9 +116,7 @@ coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
  
 new mapboxgl.Popup()
 .setLngLat(coordinates)
-.setHTML(
-    text
-)
+.setHTML(popUpMarkup)
 .addTo(map);
 });
  
