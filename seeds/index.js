@@ -3,11 +3,20 @@ const cities = require('./cities')
 const {places,descriptors} = require('./seedHelpers');
 
 
+// mongoose.connect('mongodb://127.0.0.1:27017/yelp-camp',
+//  {
+//     useNewUrlParser: true,
+//     useUnifiedTopology: true
+// });
 const mongoose = require('mongoose');
-mongoose.connect('mongodb://127.0.0.1:27017/yelp-camp', {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-});
+require('dotenv').config(); // Make sure this is called if you're using a .env file
+
+const dbUrl = process.env.DB_URL; // Assuming your connection string is stored in DB_URL
+mongoose.connect(dbUrl, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.log('Database connected'))
+  .catch(err => console.error('Database connection error', err));
+
+
 
 
 const db = mongoose.connection;

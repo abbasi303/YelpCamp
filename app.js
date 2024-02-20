@@ -27,11 +27,20 @@ const userRoute = require('./routes/user')
 const reviewsRoute = require('./routes/reviews')
 
 
+// const mongoose = require('mongoose');
+// mongoose.connect('mongodb://127.0.0.1:27017/yelp-camp', {
+//     useNewUrlParser: true,
+//     useUnifiedTopology: true
+// });
 const mongoose = require('mongoose');
-mongoose.connect('mongodb://127.0.0.1:27017/yelp-camp', {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-});
+require('dotenv').config(); // Make sure this is called if you're using a .env file
+
+const dbUrl = process.env.DB_URL; // Assuming your connection string is stored in DB_URL
+mongoose.connect(dbUrl, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.log('Database connected'))
+  .catch(err => console.error('Database connection error', err));
+
+
 
 
 const db = mongoose.connection;
@@ -94,20 +103,51 @@ const connectSrcUrls = [
     "https://events.mapbox.com/",
 ];
 const fontSrcUrls = [];
+// app.use(
+//     helmet.contentSecurityPolicy({
+//         directives: {
+//             defaultSrc: [],
+//             connectSrc: ["'self'", ...connectSrcUrls],
+//             scriptSrc: ["'unsafe-inline'", "'self'", ...scriptSrcUrls],
+//             styleSrc: ["'self'", "'unsafe-inline'", ...styleSrcUrls],
+//             workerSrc: ["'self'", "blob:"],
+//             objectSrc: [],
+//             imgSrc: [
+//                 "'self'",
+//                 "blob:",
+//                 "data:",
+//                 "https://res.cloudinary.com/douqbebwk/", //SHOULD MATCH YOUR CLOUDINARY ACCOUNT! 
+//                 "https://images.unsplash.com/",
+//             ],
+//             fontSrc: ["'self'", ...fontSrcUrls],
+//         },
+//     })
+// );
 app.use(
     helmet.contentSecurityPolicy({
         directives: {
             defaultSrc: [],
             connectSrc: ["'self'", ...connectSrcUrls],
             scriptSrc: ["'unsafe-inline'", "'self'", ...scriptSrcUrls],
-            styleSrc: ["'self'", "'unsafe-inline'", ...styleSrcUrls],
+            // Update the styleSrc array to include the sources from your CSP directive
+            styleSrc: [
+                "'self'", 
+                "'unsafe-inline'", 
+                "https://kit-free.fontawesome.com/", 
+                "https://stackpath.bootstrapcdn.com/", 
+                "https://api.mapbox.com/", 
+                "https://api.tiles.mapbox.com/", 
+                "https://fonts.googleapis.com/", 
+                "https://use.fontawesome.com/", 
+                "https://cdn.jsdelivr.net"
+            ],
             workerSrc: ["'self'", "blob:"],
             objectSrc: [],
             imgSrc: [
                 "'self'",
                 "blob:",
                 "data:",
-                "https://res.cloudinary.com/douqbebwk/", //SHOULD MATCH YOUR CLOUDINARY ACCOUNT! 
+                "https://res.cloudinary.com/douqbebwk/", // Make sure this matches your Cloudinary account!
                 "https://images.unsplash.com/",
             ],
             fontSrc: ["'self'", ...fontSrcUrls],
